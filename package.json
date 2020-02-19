@@ -8,7 +8,8 @@
     "dev": "node dist/app.js",
     "predev": "npm run build",
     "build": "tsc -p .",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "author": "TheLox95",
   "license": "ISC",
@@ -26,6 +27,9 @@
   },
   "devDependencies": {
     "@types/jest": "^25.1.2",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.20.0",
+    "eslint": "^6.8.0",
     "jest": "^25.1.0",
     "ts-jest": "^25.2.0"
   },
