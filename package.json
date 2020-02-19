@@ -1,0 +1,35 @@
+{
+  "name": "reddit-clone-backend",
+  "version": "0.0.1",
+  "description": "The backend for my reddit clone",
+  "main": "index.js",
+  "scripts": {
+    "dev:test": "NODE_ENV=test PORT=6060 npm run dev",
+    "dev": "node dist/app.js",
+    "predev": "npm run build",
+    "build": "tsc -p .",
+    "test": "jest"
+  },
+  "author": "TheLox95",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.17.2",
+    "@types/mongoose": "^5.7.1",
+    "@types/node": "^13.7.2",
+    "apollo-server": "^2.10.1",
+    "apollo-server-express": "^2.10.1",
+    "express": "^4.17.1",
+    "module-alias": "^2.2.2",
+    "mongoose": "^5.9.1",
+    "mongoose-autopopulate": "^0.12.0",
+    "typescript": "^3.7.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.1.2",
+    "jest": "^25.1.0",
+    "ts-jest": "^25.2.0"
+  },
+  "_moduleAliases": {
+    "models": "dist/models"
+  }
+}
