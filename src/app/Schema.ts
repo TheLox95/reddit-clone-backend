@@ -24,7 +24,7 @@ const Schema = gql`
     }
 
         type User{
-            id: Int!
+            id: String!
             username: String!
             email: String!
         }
@@ -47,6 +47,7 @@ const Schema = gql`
             id: ID!
             title: String!
             posts: [Post]
+            author: User!
         }`;
 
 export default Schema;

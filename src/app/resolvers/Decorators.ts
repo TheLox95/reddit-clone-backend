@@ -3,8 +3,8 @@ import { skip, combineResolvers } from 'graphql-resolvers';
 import { Resolver } from './Resolver';
 import Context from './Context';
 
-export const AuthenticatedResolver = (fn: Resolver): Resolver => combineResolvers<{}, Context, {}>(
-    (_, __, { me }) => me ? skip : new ForbiddenError('Not authenticated as user.'),
+export const AuthenticatedResolver = <A = {}>(fn: Resolver<A>): Resolver => combineResolvers<{}, Context, {}>(
+    (_, __, { me }) => me ? skip : new ForbiddenError('Not authenticated.'),
     fn,
   );
 

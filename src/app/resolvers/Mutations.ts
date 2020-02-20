@@ -5,7 +5,8 @@ import { Resolver } from "./Resolver";
 import { sign } from 'jsonwebtoken';
 import { UserInputError, AuthenticationError } from "apollo-server-express";
 import { compare } from 'bcrypt';
-import { TestResolver } from "./Decorators";
+import { TestResolver, AuthenticatedResolver } from "./Decorators";
+import Community from "models/Community";
 
 
 export const postCreateOne: Resolver<{ title: string; body: string; authorId: number }> = (...args) => {
@@ -51,14 +52,20 @@ export const signIn: Resolver<{ login: string; password: string }> = async (...a
 
 export const resetDB = TestResolver(async () => {
     const users = await User.find().exec();
-
     await User.deleteMany({_id: {$in: users.map(u => u.id)}}).exec();
 
+    const communities = await Community.find().exec();
+    await Community.deleteMany({_id: {$in: communities.map(u => u.id)}}).exec();
     return true;
 });
 
 export const seedUsers = TestResolver(async () => {
     await Promise.all(testUsers.map(tu => User.create(tu)));
-
     return true;
+});
+
+export const communityCreateOne = AuthenticatedResolver<{ title: string }>(async (_, { title }, { me }) => {
+    let c = await Community.create({ title, author: me.id });
+    c = await c.populate('author').execPopulate();
+    return c;
 });

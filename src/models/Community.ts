@@ -1,27 +1,26 @@
 import { Document, Model, model, Schema } from "mongoose";
 import * as mongooseAutopopulate from 'mongoose-autopopulate';
+import { PostSchema } from "./Post";
+import { UserSchema } from "./User";
 
 // Schema
 const CommunitySchemaObj = new Schema<CommunitySchema>({
-  id: {
-    type: String,
-    unique: true,
-    required: true,
-  },
   title: {
     type: String,
     required: true,
   },
-  posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }]
+  posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
+  author: { type: Schema.Types.ObjectId, ref: 'User', required: true }
 }, { timestamps: true });
 
 CommunitySchemaObj.plugin(mongooseAutopopulate);
 
 // DO NOT export this
-interface CommunitySchema extends Document {
+export interface CommunitySchema extends Document {
   id: string;
-  body: string;
-  author: string;
+  title: string;
+  posts: PostSchema[];
+  author: UserSchema;
 }
 
 
