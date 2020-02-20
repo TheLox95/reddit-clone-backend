@@ -1,7 +1,7 @@
 import { requestQuery, seedUsers } from "./util";
 import { UserSchema } from "../src/models/User";
 
-describe('users', () => {
+describe('auth', () => {
 
   beforeEach(async () => {
     await seedUsers();

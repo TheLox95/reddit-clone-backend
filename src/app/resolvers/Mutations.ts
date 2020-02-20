@@ -1,13 +1,14 @@
-import Post, { PostSchema } from "models/Post";
+import Post from "models/Post";
 import User from "models/User";
 import testUsers from "testData/users";
 import { Resolver } from "./Resolver";
 import { sign } from 'jsonwebtoken';
 import { UserInputError, AuthenticationError } from "apollo-server-express";
 import { compare } from 'bcrypt';
+import { TestResolver } from "./Decorators";
 
 
-export const postCreateOne: Resolver<{ title: string; body: string; authorId: number }, PostSchema> = (...args) => {
+export const postCreateOne: Resolver<{ title: string; body: string; authorId: number }> = (...args) => {
     const [, { title, body, authorId }] = args;
     return Post.create({
         title,
@@ -16,7 +17,7 @@ export const postCreateOne: Resolver<{ title: string; body: string; authorId: nu
     });
 };
 
-export const userCreateOne: Resolver<{ username: string; password: string; email: string }, { token: string }> = async (...args) => {
+export const userCreateOne: Resolver<{ username: string; password: string; email: string }> = async (...args) => {
     const [, { username, password, email }] = args;
     
     const user = await User.create({
@@ -30,7 +31,7 @@ export const userCreateOne: Resolver<{ username: string; password: string; email
     return { token };
 };
 
-export const signIn: Resolver<{ login: string; password: string }, { token: string }> = async (...args) => {
+export const signIn: Resolver<{ login: string; password: string }> = async (...args) => {
     const [, { login, password }] = args;
     
     const user = await User.findOne({
@@ -48,12 +49,7 @@ export const signIn: Resolver<{ login: string; password: string }, { token: stri
     return { token };
 };
 
-const testMutation = <A = {}>(cb: Resolver<A, boolean>): Resolver<A, boolean> => {
-    if (process.env.NODE_ENV !== 'test') return (): Promise<boolean> => Promise.resolve(false as unknown as boolean);
-    return (P, A, D): Promise<boolean> => cb(P, A, D);
-};
-
-export const resetDB: Resolver<{}, boolean> = testMutation(async () => {
+export const resetDB = TestResolver(async () => {
     const users = await User.find().exec();
 
     await User.deleteMany({_id: {$in: users.map(u => u.id)}}).exec();
@@ -61,7 +57,7 @@ export const resetDB: Resolver<{}, boolean> = testMutation(async () => {
     return true;
 });
 
-export const seedUsers: Resolver<{}, boolean> = testMutation(async () => {
+export const seedUsers = TestResolver(async () => {
     await Promise.all(testUsers.map(tu => User.create(tu)));
 
     return true;

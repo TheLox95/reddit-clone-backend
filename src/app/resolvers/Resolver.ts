@@ -1,1 +1,4 @@
-export type Resolver<ARGUMENTS, RETURN_TYPE, PARENT = {}, CONTEX = {}> = (p: PARENT, args: ARGUMENTS, c: CONTEX) => Promise<RETURN_TYPE>
+import Context from "./Context";
+import { IFieldResolver } from "apollo-server";
+
+export type Resolver<A = {}> = IFieldResolver<{}, Context, A>
