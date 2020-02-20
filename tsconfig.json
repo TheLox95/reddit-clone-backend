@@ -4,10 +4,11 @@
         "target": "es6",
         "module": "commonjs",
         "outDir": "./dist",
-        "baseUrl": "./src",
+        "baseUrl": "./",
         "skipLibCheck": true,
         "paths": {
-            "models/*": [ "models/*" ],
+            "models/*": [ "./src/models/*" ],
+            "testData/*": [ "./src/testData/*" ],
         }
     },
     "include": [

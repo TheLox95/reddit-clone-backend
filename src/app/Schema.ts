@@ -3,13 +3,15 @@ import { gql } from "apollo-server-express";
 const Schema = gql`
     type Query {
         posts(offset: Int, limit: Int): [Post!]!
-        post(ID: ID!): Post!
+        post(id: ID!): Post!
         communities(offset: Int, limit: Int): [Community!]!
-        community(ID: ID!): Community!
+        community(id: ID!): Community!
         users(offset: Int, limit: Int): [User!]!
-        user(ID: ID!): User!
+        user(id: ID!): User!
     }
     type Mutation {
+        resetDB(id: ID): Boolean
+        seedUsers(id: ID): Boolean
         userCreateOne(username: String!, password: String!, email: String!): User!
         postCreateOne(title: String!, body: String!, authorId: String!): Post!
         communityCreateOne(title: String!): Community!
@@ -19,7 +21,6 @@ const Schema = gql`
         type User{
             id: Int!
             username: String!
-            password: String!
             email: String!
         }
         

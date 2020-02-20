@@ -1,4 +1,5 @@
 import { Document, Model, model, Schema } from "mongoose";
+import { hashSync } from 'bcrypt';
 
 // Schema
 const UserSchemaObj = new Schema<UserSchema>({
@@ -6,7 +7,6 @@ const UserSchemaObj = new Schema<UserSchema>({
     type: String,
     unique: true,
     required: true,
-    lowercase: true
   },
   password: {
     type: String,
@@ -20,6 +20,12 @@ const UserSchemaObj = new Schema<UserSchema>({
   },
 }, { timestamps: true });
 
+UserSchemaObj.pre<UserSchema>('save', function (next) {
+  const saltRounds = 10;
+  this.password = hashSync(this.password, saltRounds);
+
+  next();
+});
 
 // DO NOT export this
 export interface UserSchema extends Document {

@@ -1,5 +1,5 @@
 import { Document, Model, model, Schema } from "mongoose";
-import mongooseAutopopulate from 'mongoose-autopopulate';
+import * as mongooseAutopopulate from 'mongoose-autopopulate';
 
 // Schema
 const CommunitySchemaObj = new Schema<CommunitySchema>({

@@ -1,5 +1,5 @@
 import { Document, Model, model, Schema } from "mongoose";
-import mongooseAutopopulate from 'mongoose-autopopulate';
+import * as mongooseAutopopulate from 'mongoose-autopopulate';
 
 // Schema
 const PostSchemaObj = new Schema<PostSchema>({
