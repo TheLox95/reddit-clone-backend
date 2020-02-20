@@ -16,7 +16,7 @@ describe('users', () => {
   });
 
   test('should return one user', async () => {
-    const { user } = await requestQuery<{ user: UserSchema }>(`{
+    const { data: { user } } = await requestQuery<{ user: UserSchema }>(`{
             user(id: "5e4df908251bfa517ee0a5a6"){
               username
             }
@@ -26,7 +26,7 @@ describe('users', () => {
   });
 
   test('should return 10 users', async () => {
-    const { users } = await requestQuery<{ users: UserSchema[] }>(`{
+    const { data: { users }  } = await requestQuery<{ users: UserSchema[] }>(`{
             users{
               username
             }
@@ -36,7 +36,7 @@ describe('users', () => {
   });
 
   test('should return 7 users', async () => {
-    const { users } = await requestQuery<{ users: UserSchema[] }>(`{
+    const { data: { users }  } = await requestQuery<{ users: UserSchema[] }>(`{
             users(limit: 7){
               username
             }
@@ -46,7 +46,7 @@ describe('users', () => {
   });
 
   test('should return 10 users starting from Fifth user', async () => {
-    const { users } = await requestQuery<{ users: UserSchema[] }>(`{
+    const { data: { users }  } = await requestQuery<{ users: UserSchema[] }>(`{
             users(limit: 4, offset: 5){
               username
             }
@@ -58,7 +58,7 @@ describe('users', () => {
   });
 
   test('should create a new user', async () => {
-    const { userCreateOne: { token } } = await requestQuery<{ userCreateOne: UserSchema & { token: string } }>(`
+    const { data: { userCreateOne: { token } } } = await requestQuery<{ userCreateOne: UserSchema & { token: string } }>(`
     mutation {
       userCreateOne(username: "tony", password: "F.R.I.D.A.Y", email: "tony@mail.com"){
         token

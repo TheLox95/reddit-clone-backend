@@ -1,10 +1,12 @@
 import axios from "axios";
 
-export const requestQuery = <T = {}>(query: string): Promise<T> => axios({
+type Result<T> = { data: T | null; errors: { message: string }[]};
+
+export const requestQuery = <T = {}>(query: string): Promise<Result<T>> => axios({
   url: 'http://localhost:6060/graphql',
   method: 'post',
   data: { query }
-}).then(r => r.data.data as T)
+}).then(r => (r.data as Result<T>))
   .catch(error => {
     if (error.response) {
       // The request was made and the server responded with a status code
@@ -24,6 +26,6 @@ export const requestQuery = <T = {}>(query: string): Promise<T> => axios({
     throw error;
   });
 
-export const seedUsers = (): Promise<boolean> => requestQuery(`mutation{
+export const seedUsers = (): Promise<Result<boolean>> => requestQuery(`mutation{
         seedUsers
       }`);

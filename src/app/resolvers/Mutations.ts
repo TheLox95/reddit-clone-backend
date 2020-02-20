@@ -1,8 +1,10 @@
 import Post, { PostSchema } from "models/Post";
-import User, { UserSchema } from "models/User";
+import User from "models/User";
 import testUsers from "testData/users";
 import { Resolver } from "./Resolver";
 import { sign } from 'jsonwebtoken';
+import { UserInputError, AuthenticationError } from "apollo-server-express";
+import { compare } from 'bcrypt';
 
 
 export const postCreateOne: Resolver<{ title: string; body: string; authorId: number }, PostSchema> = (...args) => {
@@ -25,7 +27,24 @@ export const userCreateOne: Resolver<{ username: string; password: string; email
 
     const { id } = user;
     const token = await sign({ id }, process.env.JWT_SECRET, { expiresIn: "30m" });
-    console.log(token);
+    return { token };
+};
+
+export const signIn: Resolver<{ login: string; password: string }, { token: string }> = async (...args) => {
+    const [, { login, password }] = args;
+    
+    const user = await User.findOne({
+        $or: [{ username: login }, { email: login }]
+    }).exec();
+
+    if (!user) throw new UserInputError('No user found with this login credentials.');
+
+    const isValid = await compare(password, user.password);
+
+    if (!isValid) throw new AuthenticationError('Username or password incorrect');
+
+    const { id } = user;
+    const token = await sign({ id }, process.env.JWT_SECRET, { expiresIn: "30m" });
     return { token };
 };
 
@@ -37,11 +56,7 @@ const testMutation = <A = {}>(cb: Resolver<A, boolean>): Resolver<A, boolean> =>
 export const resetDB: Resolver<{}, boolean> = testMutation(async () => {
     const users = await User.find().exec();
 
-    await User.deleteMany({
-        _id: {
-            $in: users.map(u => u.id)
-        }
-    }).exec();
+    await User.deleteMany({_id: {$in: users.map(u => u.id)}}).exec();
 
     return true;
 });
