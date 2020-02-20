@@ -58,15 +58,13 @@ describe('users', () => {
   });
 
   test('should create a new user', async () => {
-    const { userCreateOne } = await requestQuery<{ userCreateOne: UserSchema }>(`
+    const { userCreateOne: { token } } = await requestQuery<{ userCreateOne: UserSchema & { token: string } }>(`
     mutation {
       userCreateOne(username: "tony", password: "F.R.I.D.A.Y", email: "tony@mail.com"){
-        username
-        email
+        token
       }
     }
     `);
-    expect(userCreateOne.username).toBe('tony');
-    expect(userCreateOne.email).toBe('tony@mail.com');
+    expect(token.constructor.name ).toBe('String');
   });
 });

@@ -12,10 +12,15 @@ const Schema = gql`
     type Mutation {
         resetDB(id: ID): Boolean
         seedUsers(id: ID): Boolean
-        userCreateOne(username: String!, password: String!, email: String!): User!
+        userCreateOne(username: String!, password: String!, email: String!): Token!
         postCreateOne(title: String!, body: String!, authorId: String!): Post!
         communityCreateOne(title: String!): Community!
         commentCreateOne(body: String!, authorId: String!): Community!
+        signIn(login: String!, password: String!): Token!
+    }
+
+    type Token {
+        token: String!
     }
 
         type User{
