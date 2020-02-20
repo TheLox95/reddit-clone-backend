@@ -1,7 +1,8 @@
-import { Document, Model, model, Types, Schema, Query } from "mongoose"
+import { Document, Model, model, Schema } from "mongoose";
+import mongooseAutopopulate from 'mongoose-autopopulate';
 
 // Schema
-const CommentSchema = new Schema<ICommentSchema>({
+const CommentSchemaObj = new Schema<CommentSchema>({
   id: {
     type: String,
     unique: true,
@@ -12,29 +13,16 @@ const CommentSchema = new Schema<ICommentSchema>({
     required: true,
   },
   author: [{ type: Schema.Types.ObjectId, ref: 'User' }]
-}, { timestamps: true })
+}, { timestamps: true });
 
-CommentSchema.plugin(require('mongoose-autopopulate'));
+CommentSchemaObj.plugin(mongooseAutopopulate);
 
 // DO NOT export this
-interface ICommentSchema extends Document {
+interface CommentSchema extends Document {
   id: string;
   body: string;
   author: string;
 }
 
-// DO NOT export
-interface IComentBase extends ICommentSchema { }
-
-// Export this for strong typing
-export interface IComent extends IComentBase { }
-
-// Export this for strong typing
-export interface IComent_populated extends IComentBase { }
-
-// For model
-export interface IComentModel extends Model<IComent> { }
-
-
 // Default export
-export default model<IComent, IComentModel>("Comment", CommentSchema)
+export default model<CommentSchema, Model<CommentSchema>>("Comment", CommentSchemaObj);

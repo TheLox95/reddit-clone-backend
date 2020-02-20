@@ -1,7 +1,8 @@
-import { Document, Model, model, Types, Schema, Query } from "mongoose"
+import { Document, Model, model, Schema } from "mongoose";
+import mongooseAutopopulate from 'mongoose-autopopulate';
 
 // Schema
-const CommunitySchema = new Schema<ICommunitySchema>({
+const CommunitySchemaObj = new Schema<CommunitySchema>({
   id: {
     type: String,
     unique: true,
@@ -12,29 +13,17 @@ const CommunitySchema = new Schema<ICommunitySchema>({
     required: true,
   },
   posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }]
-}, { timestamps: true })
+}, { timestamps: true });
 
-CommunitySchema.plugin(require('mongoose-autopopulate'));
+CommunitySchemaObj.plugin(mongooseAutopopulate);
 
 // DO NOT export this
-interface ICommunitySchema extends Document {
+interface CommunitySchema extends Document {
   id: string;
   body: string;
   author: string;
 }
 
-// DO NOT export
-interface ICommunityBase extends ICommunitySchema { }
-
-// Export this for strong typing
-export interface ICommunity extends ICommunityBase { }
-
-// Export this for strong typing
-export interface ICommunity_populated extends ICommunityBase { }
-
-// For model
-export interface ICommunityModel extends Model<ICommunity> { }
-
 
 // Default export
-export default model<ICommunity, ICommunityModel>("Community", CommunitySchema)
+export default model<CommunitySchema, Model<CommunitySchema>>("Community", CommunitySchemaObj);

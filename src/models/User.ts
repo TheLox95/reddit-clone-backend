@@ -1,7 +1,7 @@
-import { Document, Model, model, Types, Schema, Query } from "mongoose"
+import { Document, Model, model, Schema } from "mongoose";
 
 // Schema
-const UserSchema = new Schema<IUserSchema>({
+const UserSchemaObj = new Schema<UserSchema>({
   username: {
     type: String,
     unique: true,
@@ -18,28 +18,15 @@ const UserSchema = new Schema<IUserSchema>({
     required: true,
     lowercase: true
   },
-}, { timestamps: true })
+}, { timestamps: true });
 
 
 // DO NOT export this
-interface IUserSchema extends Document {
+export interface UserSchema extends Document {
   username: string;
   password: string;
   email: string;
 }
 
-// DO NOT export
-interface IUserBase extends IUserSchema {}
-
-// Export this for strong typing
-export interface IUser extends IUserBase {}
-
-// Export this for strong typing
-export interface IUser_populated extends IUserBase {}
-
-// For model
-export interface IUserModel extends Model<IUser> {}
-
-
 // Default export
-export default model<IUser, IUserModel>("User", UserSchema)
+export default model<UserSchema, Model<UserSchema>>("User", UserSchemaObj);

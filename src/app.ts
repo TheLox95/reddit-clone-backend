@@ -1,5 +1,5 @@
-require('module-alias/register')
+require('module-alias/register');
 
 import Server from "./app/server";
 
-new Server().start()
+new Server().start();

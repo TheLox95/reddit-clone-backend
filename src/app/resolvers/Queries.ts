@@ -1,24 +1,6 @@
-import Post from "models/Post";
+import Post, { PostSchema } from "models/Post";
+import { Resolver } from "./Resolver";
 
-export const posts = () => {
-    return [{
-        id: 33333,
-        title: 'Post',
-        body: 'nkjhkjhkjhkjhasfasd',
-        comments: [],
-        author: {
-        }
-    }];
-}
+export const posts: Resolver<{}, PostSchema[]> = () => Post.find().exec();
 
-export const post = (...args) => {
-    console.log(args)
-    return [{
-        id: 5515,
-        title: 'Post',
-        body: 'nkjhkjhkjhkjhasfasd',
-        comments: [],
-        author: {
-        }
-    }];
-}
+export const post: Resolver<{ id: string }, PostSchema> = (p, { id }) => Post.findOne({ _id: id }).exec();

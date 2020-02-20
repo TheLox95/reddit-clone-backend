@@ -1,7 +1,8 @@
-import { Document, Model, model, Types, Schema, Query } from "mongoose"
+import { Document, Model, model, Schema } from "mongoose";
+import mongooseAutopopulate from 'mongoose-autopopulate';
 
 // Schema
-const PostSchema = new Schema<IPostSchema>({
+const PostSchemaObj = new Schema<PostSchema>({
   title: {
     type: String,
     required: true
@@ -12,30 +13,17 @@ const PostSchema = new Schema<IPostSchema>({
   },
   comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
   author: [{ type: Schema.Types.ObjectId, ref: 'User' }]
-}, { timestamps: true })
+}, { timestamps: true });
 
-PostSchema.plugin(require('mongoose-autopopulate'));
+PostSchemaObj.plugin(mongooseAutopopulate);
 
 
 // DO NOT export this
-interface IPostSchema extends Document {
+export interface PostSchema extends Document {
   id: string;
   title: string;
   body: string;
 }
 
-// DO NOT export
-interface IPostBase extends IPostSchema { }
-
-// Export this for strong typing
-export interface IPost extends IPostBase { }
-
-// Export this for strong typing
-export interface IPost_populated extends IPostBase { }
-
-// For model
-export interface IPostModel extends Model<IPost> { }
-
-
 // Default export
-export default model<IPost, IPostModel>("Post", PostSchema)
+export default model<PostSchema, Model<PostSchema>>("Post", PostSchemaObj);

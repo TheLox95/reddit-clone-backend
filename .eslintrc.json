@@ -7,14 +7,13 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:node/recommended"
+    "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
     "no-console": 0,
     "no-mixed-spaces-and-tabs": 1,
     "comma-dangle": 0,
-    "no-unused-vars": 1,
+    "no-unused-vars": [1, { "args": "after-used"}],
     "eqeqeq": [2, "smart"],
     "no-useless-concat": 2,
     "default-case": 2,

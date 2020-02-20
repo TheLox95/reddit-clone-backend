@@ -5,4 +5,4 @@ import * as Mutation from "./Mutations";
 export default {
     Query,
     Mutation,
-}
+};
