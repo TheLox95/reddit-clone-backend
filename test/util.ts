@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const requestQuery = <T = {}>(query: string, config?: { authorization?: string  }): Promise<T> => axios({
+export const requestQuery = <T = {}>(query: string, config?: { authorization?: string }): Promise<T> => axios({
   url: 'http://localhost:6060/graphql',
   method: 'post',
   data: { query },
@@ -32,15 +32,19 @@ export const requestQuery = <T = {}>(query: string, config?: { authorization?: s
   });
 
 export const seedUsers = (): Promise<boolean> => requestQuery(`mutation{
-        seedUsers
-      }`);
+  seedUsers
+}`);
+
+export const seedCommunities = (): Promise<boolean> => requestQuery(`mutation{
+  seedCommunities
+}`);
 
 export const logIn = async (): Promise<string> => {
-  const { signIn: { token }  } = await requestQuery<{ signIn: { token: string } }>(`
+  const { signIn: { token } } = await requestQuery<{ signIn: { token: string } }>(`
     mutation {
       signIn(login: "Georgina", password: "7baea3d8-ba31-482d-b9ad-42f1ea098850"){
         token
       }
     }`);
-    return token;
+  return token;
 };

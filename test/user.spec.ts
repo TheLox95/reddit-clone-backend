@@ -22,7 +22,7 @@ describe('users', () => {
     expect(user.username).toBe('Kaufman');
   });
 
-  test('should return 10 users', async () => {
+  test('should return 10 users by default', async () => {
     const { users  } = await requestQuery<{ users: UserSchema[] }>(`{
             users{
               username
@@ -42,7 +42,7 @@ describe('users', () => {
     expect(users.length).toBe(7);
   });
 
-  test('should return 10 users starting from Fifth user', async () => {
+  test('should return 4 users starting from Fifth user', async () => {
     const { users  } = await requestQuery<{ users: UserSchema[] }>(`{
             users(limit: 4, offset: 5){
               username

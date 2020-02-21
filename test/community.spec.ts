@@ -1,4 +1,4 @@
-import { requestQuery, logIn, seedUsers } from "./util";
+import { requestQuery, logIn, seedUsers, seedCommunities } from "./util";
 import { CommunitySchema } from "../src/models/Community";
 
 describe('community', () => {
@@ -10,6 +10,7 @@ describe('community', () => {
         }
       `);
     await seedUsers();
+    await seedCommunities();
   });
 
   test('should fail to create community if user is not logged', async () => {
@@ -26,6 +27,52 @@ describe('community', () => {
     }
   });
 
+  test('should return 10 users by default', async () => {
+    const { communities  } = await requestQuery<{ communities: CommunitySchema[] }>(`{
+          communities{
+              title
+            }
+          }
+        `);
+    expect(communities.length).toBe(10);
+  });
+
+  test('should return one community', async () => {
+    const sessionToken = await logIn();
+    const { community: { title: titleA } } = await requestQuery<{ community: CommunitySchema }>(`{
+      community(id: "5e4f2f3bd5d49e19968df7c7"){ title }
+    }`, { authorization: sessionToken });
+
+    expect(titleA).toBe('minim adipisicing');
+
+    const { community: { title: titleB } } = await requestQuery<{ community: CommunitySchema }>(`{
+      community(id: "5e4f2f3b9fb4c6240f8c240e"){ title }
+    }`);
+
+    expect(titleB).toBe('cupidatat id');
+  });
+
+  test('should return 4 communities', async () => {
+    const { communities } = await requestQuery<{ communities: CommunitySchema[] }>(`{
+            communities(limit: 4){
+              title
+            }
+          }
+        `);
+    expect(communities.length).toBe(4);
+  });
+
+  test('should return 6 users starting from Fifth user', async () => {
+    const { communities  } = await requestQuery<{ communities: CommunitySchema[] }>(`{
+      communities(limit: 6, offset: 4){
+              title
+            }
+          }
+        `);
+    expect(communities.length).toBe(6);
+    expect(communities[0].title).toBe('voluptate occaecat');
+    expect(communities[communities.length - 1].title).toBe('aute labore');
+  });
 
   test('should create a community fine', async () => {
     const sessionToken = await logIn();

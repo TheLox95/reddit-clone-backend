@@ -17,7 +17,6 @@ CommunitySchemaObj.plugin(mongooseAutopopulate);
 
 // DO NOT export this
 export interface CommunitySchema extends Document {
-  id: string;
   title: string;
   posts: PostSchema[];
   author: UserSchema;

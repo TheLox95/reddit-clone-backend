@@ -1,6 +1,7 @@
 import Post from "models/Post";
 import User from "models/User";
 import testUsers from "testData/users";
+import testCommunities from "testData/communities";
 import { Resolver } from "./Resolver";
 import { sign } from 'jsonwebtoken';
 import { UserInputError, AuthenticationError } from "apollo-server-express";
@@ -61,6 +62,14 @@ export const resetDB = TestResolver(async () => {
 
 export const seedUsers = TestResolver(async () => {
     await Promise.all(testUsers.map(tu => User.create(tu)));
+    return true;
+});
+
+export const seedCommunities = TestResolver(async () => {
+    await Promise.all(testCommunities.map(tc => {
+        const j = { ...tc, author: testUsers[Math.floor(Math.random() * 5)]._id };
+        return Community.create(j);
+    }));
     return true;
 });
 
