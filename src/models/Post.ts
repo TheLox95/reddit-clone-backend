@@ -1,5 +1,8 @@
 import { Document, Model, model, Schema } from "mongoose";
 import * as mongooseAutopopulate from 'mongoose-autopopulate';
+import { CommentSchema } from "./Comment";
+import { UserSchema } from "./User";
+import { CommunitySchema } from "./Community";
 
 // Schema
 const PostSchemaObj = new Schema<PostSchema>({
@@ -11,8 +14,9 @@ const PostSchemaObj = new Schema<PostSchema>({
     type: String,
     required: true,
   },
-  comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
-  author: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+  community: { type: Schema.Types.ObjectId, ref: 'Community' , required: true },
+  comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' , required: true, autopopulate: true }],
+  author: { type: Schema.Types.ObjectId, ref: 'User', required: true, autopopulate: true  }
 }, { timestamps: true });
 
 PostSchemaObj.plugin(mongooseAutopopulate);
@@ -20,9 +24,11 @@ PostSchemaObj.plugin(mongooseAutopopulate);
 
 // DO NOT export this
 export interface PostSchema extends Document {
-  id: string;
   title: string;
   body: string;
+  community: CommunitySchema;
+  comments: CommentSchema[];
+  author: UserSchema;
 }
 
 // Default export

@@ -10,7 +10,8 @@ const UserSchemaObj = new Schema<UserSchema>({
   },
   password: {
     type: String,
-    required: true
+    required: true,
+    select: false
   },
   email: {
     type: String,

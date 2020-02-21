@@ -39,6 +39,10 @@ export const seedCommunities = (): Promise<boolean> => requestQuery(`mutation{
   seedCommunities
 }`);
 
+export const seedPosts = (): Promise<boolean> => requestQuery(`mutation{
+  seedPosts
+}`);
+
 export const logIn = async (): Promise<string> => {
   const { signIn: { token } } = await requestQuery<{ signIn: { token: string } }>(`
     mutation {

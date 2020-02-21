@@ -13,10 +13,11 @@ const Schema = gql`
         resetDB(id: ID): Boolean
         seedUsers(id: ID): Boolean
         seedCommunities(id: ID): Boolean
+        seedPosts(id: ID): Boolean
         userCreateOne(username: String!, password: String!, email: String!): Token!
         postCreateOne(title: String!, body: String!, authorId: String!): Post!
         communityCreateOne(title: String!): Community!
-        commentCreateOne(body: String!, authorId: String!): Community!
+        commentCreateOne(body: String!, postId: String!): Comment!
         signIn(login: String!, password: String!): Token!
     }
 
@@ -35,13 +36,15 @@ const Schema = gql`
             title: String!
             body: String!
             comments: [Comment]
-            author: User
+            author: User!
+            community: ID!
         }
         
         type Comment{
             id: ID!
             body: String!
-            author: User
+            author: User!
+            post: ID!
         }
         
         type Community{

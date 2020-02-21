@@ -2,12 +2,14 @@ import Post from "models/Post";
 import User from "models/User";
 import testUsers from "testData/users";
 import testCommunities from "testData/communities";
+import testPosts from "testData/posts";
 import { Resolver } from "./Resolver";
 import { sign } from 'jsonwebtoken';
-import { UserInputError, AuthenticationError } from "apollo-server-express";
+import { UserInputError, AuthenticationError, ValidationError } from "apollo-server-express";
 import { compare } from 'bcrypt';
 import { TestResolver, AuthenticatedResolver } from "./Decorators";
 import Community from "models/Community";
+import Comment from "models/Comment";
 
 
 export const postCreateOne: Resolver<{ title: string; body: string; authorId: number }> = (...args) => {
@@ -38,7 +40,7 @@ export const signIn: Resolver<{ login: string; password: string }> = async (...a
     
     const user = await User.findOne({
         $or: [{ username: login }, { email: login }]
-    }).exec();
+    }).select('+password').exec();
 
     if (!user) throw new UserInputError('No user found with this login credentials.');
 
@@ -57,6 +59,9 @@ export const resetDB = TestResolver(async () => {
 
     const communities = await Community.find().exec();
     await Community.deleteMany({_id: {$in: communities.map(u => u.id)}}).exec();
+
+    const posts = await Post.find().exec();
+    await Post.deleteMany({_id: {$in: posts.map(u => u.id)}}).exec();
     return true;
 });
 
@@ -73,8 +78,29 @@ export const seedCommunities = TestResolver(async () => {
     return true;
 });
 
+export const seedPosts = TestResolver(async () => {
+    await Promise.all(testPosts.map(tp => {
+        const j = {
+            ...tp,
+            author: testUsers[Math.floor(Math.random() * 5)]._id,
+            community: testCommunities[Math.floor(Math.random() * 5)]._id,
+        };
+        return Post.create(j);
+    }));
+    return true;
+});
+
 export const communityCreateOne = AuthenticatedResolver<{ title: string }>(async (_, { title }, { me }) => {
     let c = await Community.create({ title, author: me.id });
     c = await c.populate('author').execPopulate();
+    return c;
+});
+
+export const commentCreateOne = AuthenticatedResolver<{ body: string; postId: string; authorId: string }>(async (_, { body, postId }, { me }) => {
+    const postObj = await Post.findOne({ _id: postId }).exec();
+    if (!postObj) throw new ValidationError('Post does not exist.');
+    
+    const c = await Comment.create({ body, author: me.id, post: postObj.id });
+
     return c;
 });
