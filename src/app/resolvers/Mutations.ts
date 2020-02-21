@@ -62,6 +62,9 @@ export const resetDB = TestResolver(async () => {
 
     const posts = await Post.find().exec();
     await Post.deleteMany({_id: {$in: posts.map(u => u.id)}}).exec();
+
+    const comments = await Comment.find().exec();
+    await Comment.deleteMany({_id: {$in: comments.map(u => u.id)}}).exec();
     return true;
 });
 
