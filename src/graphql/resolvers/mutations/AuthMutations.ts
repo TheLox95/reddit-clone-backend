@@ -22,11 +22,29 @@ export const communityCreateOne = AuthenticatedResolver<{ title: string }>(async
     return c;
 });
 
-export const commentCreateOne = AuthenticatedResolver<{ body: string; postId: string; authorId: string }>(async (_, { body, postId }, { me }) => {
-    const postObj = await Post.findOne({ _id: postId }).exec();
-    if (!postObj) throw new ValidationError('Post does not exist.');
-    
-    const c = await Comment.create({ body, author: me.id, post: postObj.id });
+export const commentCreateOne = AuthenticatedResolver<{ body: string; rootPostId: string; postId?: string; commentId?: string }>(async (_, { body, rootPostId, postId, commentId }, { me }) => {
+    if (postId && commentId) throw new ValidationError('Cannot pass Post id and Comment ID at the same time.');
 
-    return c;
+    const commentToSave = { body, author: me.id, comments: [], rootPost: rootPostId };
+
+    if (postId) {
+        const postObj = await Post.findOne({ _id: postId }).exec();
+        if (!postObj) throw new ValidationError('Post does not exist.');
+
+        const result = await Comment.create({ ...commentToSave, post: postId });
+        return result;
+    }
+
+    if (commentId) {
+        const commentObj = await Comment.findOne({ _id: commentId }).exec();
+        if (!commentObj) throw new ValidationError('Comment does not exist.');
+
+        const c = await Comment.create(commentToSave);
+
+        await Comment.findByIdAndUpdate(commentId, {
+            "$push": { "comments": c.id } 
+        }).exec();
+
+        return c;
+    }
 });

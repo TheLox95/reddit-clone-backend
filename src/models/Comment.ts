@@ -9,8 +9,10 @@ const CommentSchemaObj = new Schema<CommentSchema>({
     type: String,
     required: true,
   },
-  author: { type: Schema.Types.ObjectId, ref: 'User', required: true, autopopulate: true },
-  post: { type: Schema.Types.ObjectId, ref: 'Post', required: true }
+  comments: [{ type: Schema.Types.ObjectId, ref: 'Comment', required: true, autopopulate: true }],
+  author: { type: Schema.Types.ObjectId, ref: 'User', autopopulate: true },
+  rootPost: { type: Schema.Types.ObjectId, ref: 'Post' },
+  post: { type: Schema.Types.ObjectId, ref: 'Post' }
 }, { timestamps: true });
 
 CommentSchemaObj.plugin(mongooseAutopopulate);
@@ -19,7 +21,9 @@ CommentSchemaObj.plugin(mongooseAutopopulate);
 export interface CommentSchema extends Document {
   body: string;
   author: UserSchema;
-  post: PostSchema;
+  rootPost: PostSchema;
+  post?: PostSchema;
+  comments: CommentSchema[];
 }
 
 // Default export

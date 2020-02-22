@@ -2,6 +2,7 @@ import Post from "models/Post";
 import User from "models/User";
 import testUsers from "testData/users";
 import testCommunities from "testData/communities";
+import testComments from "testData/comments";
 import testPosts from "testData/posts";
 import { TestResolver } from "../Decorators";
 import Community from "models/Community";
@@ -36,11 +37,22 @@ export const seedCommunities = TestResolver(async () => {
 });
 
 export const seedPosts = TestResolver(async () => {
-    await Promise.all(testPosts.map(tp => {
+    await Promise.all(testPosts.map(async tp => {
+        const coooo = await Promise.all(testComments.slice(1, 3).map(async (tc) => {
+            const j = {
+                ...tc,
+                author: testUsers[Math.floor(Math.random() * 5)]._id,
+                rootPost: tp._id,
+            };
+            const comment = await Comment.create(j);
+            return comment.id;
+        }));
+
         const j = {
             ...tp,
             author: testUsers[Math.floor(Math.random() * 5)]._id,
             community: testCommunities[Math.floor(Math.random() * 5)]._id,
+            comments: coooo
         };
         return Post.create(j);
     }));

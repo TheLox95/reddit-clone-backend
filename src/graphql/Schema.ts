@@ -18,7 +18,7 @@ const Schema = gql`
         userCreateOne(username: String!, password: String!, email: String!): Token!
         postCreateOne(title: String!, body: String!, communityId: ID!): Post!
         communityCreateOne(title: String!): Community!
-        commentCreateOne(body: String!, postId: String!): Comment!
+        commentCreateOne(body: String!, rootPostId: String!, postId: String, commentId: String): Comment!
         signIn(login: String!, password: String!): Token!
     }
 
@@ -45,7 +45,9 @@ const Schema = gql`
             id: ID!
             body: String!
             author: User!
-            post: ID!
+            rootPost: ID!
+            post: ID
+            comments: [Comment]
         }
         
         type Community{

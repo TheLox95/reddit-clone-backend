@@ -7,7 +7,13 @@ export default class Server {
 
     private preStart(): Promise<unknown> {
         const dbName = process.env.NODE_ENV === 'test' ? 'reddit-clone-test' : 'reddit-clone';
-        return mongoose.connect(`mongodb://localhost:27017/${dbName}`, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
+        const opts: mongoose.ConnectionOptions = {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useCreateIndex: true,
+            useFindAndModify: true
+        };
+        return mongoose.connect(`mongodb://localhost:27017/${dbName}`, opts);
     }
 
     start(): Promise<unknown> {
