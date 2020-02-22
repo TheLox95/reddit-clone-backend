@@ -27,7 +27,7 @@ describe('community', () => {
     }
   });
 
-  test('should return 10 users by default', async () => {
+  test('should return 10 communities by default', async () => {
     const { communities  } = await requestQuery<{ communities: CommunitySchema[] }>(`{
           communities{
               title
@@ -62,7 +62,7 @@ describe('community', () => {
     expect(communities.length).toBe(4);
   });
 
-  test('should return 6 users starting from Fifth user', async () => {
+  test('should return 6 communities starting from Fifth user', async () => {
     const { communities  } = await requestQuery<{ communities: CommunitySchema[] }>(`{
       communities(limit: 6, offset: 4){
               title

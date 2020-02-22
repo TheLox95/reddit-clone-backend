@@ -12,14 +12,18 @@ import Community from "models/Community";
 import Comment from "models/Comment";
 
 
-export const postCreateOne: Resolver<{ title: string; body: string; authorId: number }> = (...args) => {
-    const [, { title, body, authorId }] = args;
+
+export const postCreateOne = AuthenticatedResolver<{ title: string; body: string; communityId: string }>(async (_, { title, body, communityId }, { me }) => {
+    const communityObj = await Community.findOne({ _id: communityId }).exec();
+    if (!communityObj) throw new ValidationError('Community does not exist.');
+
     return Post.create({
         title,
         body,
-        author: authorId
+        author: me.id,
+        community: communityId
     });
-};
+});
 
 export const userCreateOne: Resolver<{ username: string; password: string; email: string }> = async (...args) => {
     const [, { username, password, email }] = args;

@@ -14,8 +14,9 @@ const Schema = gql`
         seedUsers(id: ID): Boolean
         seedCommunities(id: ID): Boolean
         seedPosts(id: ID): Boolean
+
         userCreateOne(username: String!, password: String!, email: String!): Token!
-        postCreateOne(title: String!, body: String!, authorId: String!): Post!
+        postCreateOne(title: String!, body: String!, communityId: ID!): Post!
         communityCreateOne(title: String!): Community!
         commentCreateOne(body: String!, postId: String!): Comment!
         signIn(login: String!, password: String!): Token!
