@@ -1,5 +1,5 @@
 import { Document, Model, model, Schema } from "mongoose";
-import * as mongooseAutopopulate from 'mongoose-autopopulate';
+import mongooseAutopopulate from 'mongoose-autopopulate';
 import { CommentSchema } from "./Comment";
 import { UserSchema } from "./User";
 import { CommunitySchema } from "./Community";

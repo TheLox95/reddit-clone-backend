@@ -17,12 +17,27 @@ export const users: Resolver<{ offset?: number; limit?: number }> = async (p, { 
     return u;
 };
 
-export const community: Resolver<{ id: string }> = async (p, { id }) => {
-    const u = await Community.findById(id).exec();
-    return u;
+export const community: Resolver<{ id: string }> = async (p, { id }, { loaders }) => {
+    const c = await Community.findById(id).exec();
+    c.author = await loaders.batchAuthors.load(c.author.toString());
+    c.posts = await Promise.all(c.posts.map(p => loaders.batchPosts.load(p.id)));
+    return c;
 };
 
-export const communities: Resolver<{ offset?: number; limit?: number }> = async (p, { offset = 0, limit = 10 }) => {
-    const u = await Community.find().limit(limit).skip(offset).sort({date: 'desc'}).exec();
-    return u;
+export const communities: Resolver<{ offset?: number; limit?: number }> = async (p, { offset = 0, limit = 10 }, { loaders }) => {
+
+    let communities = await Community.find().limit(limit).skip(offset).sort({date: 'desc'}).exec();
+    await Promise.all(communities.map(async c => {
+        c.posts = await Promise.all(c.posts.map(p => loaders.batchPosts.load(p.id)));
+        return c;
+    }));
+    communities = await Promise.all(communities
+        .map(async c => {
+            c.author = await loaders.batchAuthors.load(c.author.toString());
+            return c;
+        })
+    );
+    
+    
+    return communities;
 };

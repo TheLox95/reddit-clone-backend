@@ -6,6 +6,7 @@
         "outDir": "./dist",
         "baseUrl": "./",
         "skipLibCheck": true,
+        "esModuleInterop": true,
         "paths": {
             "models/*": [ "./src/models/*" ],
             "testData/*": [ "./src/testData/*" ],

@@ -23,6 +23,7 @@
     "apollo-server": "^2.10.1",
     "apollo-server-express": "^2.10.1",
     "bcrypt": "^3.0.8",
+    "dataloader": "^2.0.0",
     "express": "^4.17.1",
     "graphql-resolvers": "^0.4.2",
     "jsonwebtoken": "^8.5.1",

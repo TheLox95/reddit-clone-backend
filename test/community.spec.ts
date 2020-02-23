@@ -28,25 +28,49 @@ describe('community', () => {
   });
 
   test('should return 10 communities by default', async () => {
-    const { communities  } = await requestQuery<{ communities: CommunitySchema[] }>(`{
+    const { communities } = await requestQuery<{ communities: CommunitySchema[] }>(`{
           communities{
               title
+              author{
+                id
+              }
+              posts{
+                id
+              }
             }
           }
         `);
     expect(communities.length).toBe(10);
+    expect(communities[0].author.id).toBeTruthy();
+    expect(communities[0].posts.length).toBe(4);
   });
 
   test('should return one community', async () => {
     const sessionToken = await logIn();
     const { community: { title: titleA } } = await requestQuery<{ community: CommunitySchema }>(`{
-      community(id: "5e4f2f3bd5d49e19968df7c7"){ title }
+      community(id: "5e4f2f3bd5d49e19968df7c7"){
+        title
+        author{
+          id
+        }
+        posts{
+          id
+        }
+      }
     }`, { authorization: sessionToken });
 
     expect(titleA).toBe('minim adipisicing');
 
     const { community: { title: titleB } } = await requestQuery<{ community: CommunitySchema }>(`{
-      community(id: "5e4f2f3b9fb4c6240f8c240e"){ title }
+      community(id: "5e4f2f3b9fb4c6240f8c240e"){
+        title
+        author{
+          id
+        }
+        posts{
+          id
+        }
+      }
     }`);
 
     expect(titleB).toBe('cupidatat id');

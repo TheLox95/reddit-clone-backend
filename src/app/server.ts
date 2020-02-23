@@ -1,5 +1,5 @@
-import * as mongoose from 'mongoose';
-import * as express from 'express';
+import mongoose from 'mongoose';
+import express from 'express';
 import { server } from '../graphql/Graphql';
 
 export default class Server {
