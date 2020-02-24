@@ -1,6 +1,7 @@
 import { requestQuery, seedUsers, logIn, seedPosts, seedCommunities } from "./util";
 import { CommentSchema } from "../src/models/Comment";
 import { PostSchema } from "../src/models/Post";
+import { CommunitySchema } from "../src/models/Community";
 
 describe('community', () => {
 
@@ -62,14 +63,16 @@ describe('community', () => {
   });
 
   test('should create a comment for a post fine', async () => {
-    await seedUsers();
     await seedCommunities();
-    await seedPosts();
     const token = await logIn();
+
+    const { communities } = await requestQuery<{ communities: CommunitySchema[] }>(`{
+      communities{ posts{id} }
+    }`);
 
     const { commentCreateOne: { body, post, rootPost, author: { id } } } = await requestQuery<{ commentCreateOne: CommentSchema }>(`
       mutation{
-        commentCreateOne(body: "# interesting", postId: "5e502c15e40e3b343a93d0a3", rootPostId: "5e502c15e40e3b343a93d0a3"){
+        commentCreateOne(body: "# interesting", postId: "${communities[0].posts[0].id}", rootPostId: "${communities[0].posts[0].id}"){
           body
           post
           rootPost
@@ -80,9 +83,9 @@ describe('community', () => {
         }
       }`, { authorization: token });
     expect(body).toBe('# interesting');
-    expect(id).toBe('5e4df9081e529ebd9207cddc');
-    expect(post).toBe('5e502c15e40e3b343a93d0a3');
-    expect(rootPost).toBe('5e502c15e40e3b343a93d0a3');
+    expect(id).toBeTruthy();
+    expect(post).toBe(communities[0].posts[0].id);
+    expect(rootPost).toBe(communities[0].posts[0].id);
   });
 
   test('should fail to create comment if comment does not exist', async () => {
@@ -103,18 +106,14 @@ describe('community', () => {
   });
 
   test('should create a comment for another comment fine', async () => {
-    await seedUsers();
-    await seedPosts();
+    await seedCommunities();
     const token = await logIn();
 
-    const { post: rootPost } = await requestQuery<{ post: PostSchema }>(`{
-      post(id: "5e502c15f38ab5f23bbd7afa"){
-        id
-        comments{
-          id
-        }
-      }
-    }`, { authorization: token });
+    const { communities } = await requestQuery<{ communities: CommunitySchema[] }>(`{
+      communities{ posts{id comments {id} } }
+    }`);
+
+    const rootPost = communities[0].posts[0];
 
     const { commentCreateOne: { id: newCommentId, body, author: { id: authorId } } } = await requestQuery<{ commentCreateOne: CommentSchema }>(`
       mutation{
@@ -123,7 +122,6 @@ describe('community', () => {
           id
           author{
             id
-            username
           }
           post
         }

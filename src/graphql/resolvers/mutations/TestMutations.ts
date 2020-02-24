@@ -29,15 +29,17 @@ export const seedUsers = TestResolver(async () => {
 });
 
 export const seedCommunities = TestResolver(async () => {
+    const users = await Promise.all(testUsers.map(tu => User.create(tu)));
+    const comments = await Promise.all(testComments.map(tu => Comment.create(tu)));
+
     await Promise.all(testCommunities.map(async tc => {
-        const p = await Promise.all(testPosts.slice(0, 4).map(tp => {
-            delete tp._id;
-            return Post.create({ ...tp, community: tc._id, author: testUsers[Math.floor(Math.random() * 5)]._id });
-        }));
         const j = {
             ...tc,
-            author: testUsers[Math.floor(Math.random() * 5)]._id,
-            posts: p,
+            author: users[Math.floor(Math.random() * 5)]._id,
+            posts: await Promise.all(testPosts.map(tu => {
+                delete tu._id;
+                return Post.create({ ...tu, community: tc._id, author: users[Math.floor(Math.random() * 9)]._id, comments: comments.slice(0, 5) });
+            })),
         };
         return Community.create(j);
     }));

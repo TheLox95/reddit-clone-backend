@@ -28,7 +28,6 @@ export const server = new ApolloServer({
   },
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   formatError: (error) => {
-    console.log(JSON.stringify(error, null, "\t"));
     return error;
   }
 });

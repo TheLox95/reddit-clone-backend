@@ -4,16 +4,19 @@ import Community from "models/Community";
 import Comment from "models/Comment";
 import { ValidationError } from "apollo-server";
 
-export const postCreateOne = AuthenticatedResolver<{ title: string; body: string; communityId: string }>(async (_, { title, body, communityId }, { me }) => {
+export const postCreateOne = AuthenticatedResolver<{ title: string; body: string; communityId: string }>(async (_, { title, body, communityId }, { me, loaders  }) => {
     const communityObj = await Community.findOne({ _id: communityId }).exec();
     if (!communityObj) throw new ValidationError('Community does not exist.');
 
-    return Post.create({
+    const p = await Post.create({
         title,
         body,
         author: me.id,
         community: communityId
     });
+
+    await Post.batchData(loaders, [p])[0];
+    return p;
 });
 
 export const communityCreateOne = AuthenticatedResolver<{ title: string }>(async (_, { title }, { me }) => {

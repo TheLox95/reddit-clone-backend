@@ -1,4 +1,4 @@
-import { requestQuery, logIn, seedUsers, seedCommunities } from "./util";
+import { requestQuery, logIn, seedCommunities } from "./util";
 import { CommunitySchema } from "../src/models/Community";
 
 describe('community', () => {
@@ -9,7 +9,6 @@ describe('community', () => {
           resetDB
         }
       `);
-    await seedUsers();
     await seedCommunities();
   });
 
@@ -29,20 +28,20 @@ describe('community', () => {
 
   test('should return 10 communities by default', async () => {
     const { communities } = await requestQuery<{ communities: CommunitySchema[] }>(`{
-          communities{
-              title
-              author{
-                id
-              }
-              posts{
-                id
-              }
-            }
+      communities{
+          title
+          author{
+            id
           }
-        `);
+          posts{
+            id
+          }
+        }
+      }
+    `);
     expect(communities.length).toBe(10);
     expect(communities[0].author.id).toBeTruthy();
-    expect(communities[0].posts.length).toBe(4);
+    expect(communities[0].posts[0].id).toBeTruthy();
   });
 
   test('should return one community', async () => {
