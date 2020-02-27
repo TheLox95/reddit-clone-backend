@@ -51,4 +51,14 @@ describe('auth', () => {
     expect(token.constructor.name).toBe('String');
   });
 
+  test('should register fine', async () => {
+    const { userCreateOne: { token } } = await requestQuery<{ userCreateOne: { token: string } }>(`
+    mutation{
+      userCreateOne(username: "leonardo", password:"123456", email: "leo@mail.com"){
+        token
+      }
+    }`);
+    expect(token.constructor.name).toBe('String');
+  });
+
 });

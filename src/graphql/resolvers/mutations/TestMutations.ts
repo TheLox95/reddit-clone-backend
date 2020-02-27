@@ -36,7 +36,7 @@ export const seedCommunities = TestResolver(async () => {
         const j = {
             ...tc,
             author: users[Math.floor(Math.random() * 5)]._id,
-            posts: await Promise.all(testPosts.map(tu => {
+            posts: await Promise.all(testPosts.slice(0, 2).map(tu => {
                 delete tu._id;
                 return Post.create({ ...tu, community: tc._id, author: users[Math.floor(Math.random() * 9)]._id, comments: comments.slice(0, 5) });
             })),

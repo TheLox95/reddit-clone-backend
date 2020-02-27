@@ -95,7 +95,20 @@ describe('community', () => {
     expect(posts[0].comments[0].id).toBeTruthy();
   });
 
-
+  test('should return 6 post starting from Fifth user', async () => {
+    const { posts } = await requestQuery<{ posts: PostSchema[] }>(`{
+      posts(offset: 500){
+        title
+        author{
+          id
+        }
+        comments{
+          id
+        }
+      }
+    }`);
+    expect(posts.length).toBe(0);
+  });
 
   test('should fail to create post if user is not logged', async () => {
     try {
