@@ -29,8 +29,7 @@ describe('community', () => {
 
   test('should fail to create comment if post does not exist', async () => {
     try {
-      await seedUsers();
-      await seedPosts();
+      await seedCommunities();
       const token = await logIn();
 
       await requestQuery<{ commentCreateOne: CommentSchema[] }>(`
@@ -142,8 +141,34 @@ describe('community', () => {
       }`);
 
     const rootComment = comments.find(c => c.id === rootPost.comments[0].id);
-    expect(rootComment.comments.length).toBe(1);
     expect(rootComment.comments.find(c => c.id === newCommentId).body).toBe("# more interesting");
   });
 
+  test('should return sub comments for a comment', async () => {
+    await seedCommunities();
+    const sessionToken = await logIn();
+
+    const { communities } = await requestQuery<{ communities: CommunitySchema[] }>(`{
+      communities{
+        posts{
+          id,
+          comments{
+            id
+            comments{
+              id
+            }
+          }
+        }
+      }
+    }`);
+
+    const { subComments } = await requestQuery<{ subComments: CommentSchema[] }>(`{
+        subComments(id: "${communities[0].posts[0].comments.find(c => c.comments.length !== 0).id}"){
+        body
+      }
+    }`, { authorization: sessionToken });
+
+    expect(subComments.length).toBeGreaterThan(0);
+
+  });
 });

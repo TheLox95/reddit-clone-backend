@@ -8,6 +8,7 @@ const Schema = gql`
         community(id: ID!): Community!
         users(offset: Int, limit: Int): [User!]!
         user(id: ID!): User!
+        subComments(id: ID!): [Comment]!
     }
     type Mutation {
         resetDB(id: ID): Boolean

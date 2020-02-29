@@ -3,6 +3,7 @@ import { Resolver } from "./Resolver";
 import User from "models/User";
 import Community from "models/Community";
 import { UserInputError } from "apollo-server";
+import Comment from "models/Comment";
 
 export const posts: Resolver<{ offset?: number; limit?: number }> = async (_, { offset = 0, limit = 10 }, { loaders }) => {
     const posts = await Post.find().limit(limit).skip(offset).sort({date: 'desc'}).exec();
@@ -35,4 +36,11 @@ export const community: Resolver<{ id: string }> = async (p, { id }, { loaders }
 export const communities: Resolver<{ offset?: number; limit?: number }> = async (p, { offset = 0, limit = 10 }, { loaders }) => {
     const communities = await Community.find().limit(limit).skip(offset).sort({date: 'desc'}).exec();
     return Community.batchData(loaders, communities);
+};
+
+export const subComments: Resolver<{ id: string }> = async (p, { id } ) => {
+    const comment = await Comment.findById(id).exec();
+    if (!comment) return new UserInputError('Comment does not exist.');
+
+    return comment.comments;
 };
