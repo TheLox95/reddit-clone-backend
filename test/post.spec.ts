@@ -68,6 +68,26 @@ describe('community', () => {
     expect(postB.comments[0].id).toBeTruthy();
   });
 
+  test('should fails if post does not exist', async () => {
+    try {
+      const sessionToken = await logIn();
+      await requestQuery<{ post: PostSchema }>(`{
+      post(id: "5e4f2f3b98916c0fcb1c0000"){
+        title
+        author{
+          id
+        }
+        comments{
+          id
+        }
+      }
+    }`, { authorization: sessionToken });
+    } catch (errors) {
+      expect(errors.length).toBe(1);
+      expect(errors[0].message).toBe('Post does not exist.');
+    }
+  });
+
   test('should return 4 posts', async () => {
     const { posts } = await requestQuery<{ posts: PostSchema[] }>(`{
       posts(limit: 4){

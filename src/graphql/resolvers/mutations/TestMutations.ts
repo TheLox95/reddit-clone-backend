@@ -30,15 +30,17 @@ export const seedUsers = TestResolver(async () => {
 
 export const seedCommunities = TestResolver(async () => {
     const users = await Promise.all(testUsers.map(tu => User.create(tu)));
-    const comments = await Promise.all(testComments.map(tu => Comment.create(tu)));
 
     await Promise.all(testCommunities.map(async tc => {
         const j = {
             ...tc,
             author: users[Math.floor(Math.random() * 5)]._id,
-            posts: await Promise.all(testPosts.slice(0, 2).map(tu => {
+            posts: await Promise.all(testPosts.slice(0, 2).map(async tu => {
                 delete tu._id;
-                return Post.create({ ...tu, community: tc._id, author: users[Math.floor(Math.random() * 9)]._id, comments: comments.slice(0, 5) });
+                const createdPost = await Post.create({ ...tu, community: tc._id, author: users[Math.floor(Math.random() * 9)]._id });
+                const subComments = await Promise.all(testComments.map(tu => ({...tu, rootPost: createdPost.id, author: users[Math.floor(Math.random() * (8+1))]})).map(tu => Comment.create(tu)));
+                const comments = await Promise.all(testComments.map(tu => ({...tu, rootPost: createdPost.id, comments: subComments.slice(0,Math.floor(Math.random() * (8+1))), author: users[Math.floor(Math.random() * (8+1))]})).map(tu => Comment.create(tu)));
+                return Post.findByIdAndUpdate(createdPost.id, {comments});
             })),
         };
         return Community.create(j);

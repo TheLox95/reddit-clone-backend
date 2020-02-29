@@ -11,7 +11,7 @@ const CommentSchemaObj = new Schema<CommentSchema>({
   },
   comments: [{ type: Schema.Types.ObjectId, ref: 'Comment', required: true, autopopulate: true }],
   author: { type: Schema.Types.ObjectId, ref: 'User', autopopulate: true },
-  rootPost: { type: Schema.Types.ObjectId, ref: 'Post' },
+  rootPost: { type: Schema.Types.ObjectId, ref: 'Post', required: true },
   post: { type: Schema.Types.ObjectId, ref: 'Post' }
 }, { timestamps: true });
 

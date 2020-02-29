@@ -9,7 +9,7 @@ describe('users', () => {
           resetDB
         }
       `);
-      await seedUsers();
+    await seedUsers();
   });
 
   test('should return one user', async () => {
@@ -22,8 +22,22 @@ describe('users', () => {
     expect(user.username).toBe('Kaufman');
   });
 
+  test('should fails if user does not exist', async () => {
+    try {
+      await requestQuery<{ user: UserSchema }>(`{
+            user(id: "5e4df908251bfa517ee0a000"){
+              username
+            }
+          }
+        `);
+    } catch (errors) {
+      expect(errors.length).toBe(1);
+      expect(errors[0].message).toBe('User does not exist.');
+    }
+  });
+
   test('should return 10 users by default', async () => {
-    const { users  } = await requestQuery<{ users: UserSchema[] }>(`{
+    const { users } = await requestQuery<{ users: UserSchema[] }>(`{
             users{
               username
             }
@@ -33,7 +47,7 @@ describe('users', () => {
   });
 
   test('should return 7 users', async () => {
-    const { users  } = await requestQuery<{ users: UserSchema[] }>(`{
+    const { users } = await requestQuery<{ users: UserSchema[] }>(`{
             users(limit: 7){
               username
             }
@@ -43,7 +57,7 @@ describe('users', () => {
   });
 
   test('should return 4 users starting from Fifth user', async () => {
-    const { users  } = await requestQuery<{ users: UserSchema[] }>(`{
+    const { users } = await requestQuery<{ users: UserSchema[] }>(`{
             users(limit: 4, offset: 5){
               username
             }
@@ -62,6 +76,6 @@ describe('users', () => {
       }
     }
     `);
-    expect(token.constructor.name ).toBe('String');
+    expect(token.constructor.name).toBe('String');
   });
 });

@@ -44,6 +44,26 @@ describe('community', () => {
     expect(communities[0].posts[0].id).toBeTruthy();
   });
 
+  test('should fails if community does not exist', async () => {
+    try {
+      const sessionToken = await logIn();
+      await requestQuery<{ community: CommunitySchema }>(`{
+      community(id: "5e4f2f3bd5d49e19968df000"){
+        title
+        author{
+          id
+        }
+        posts{
+          id
+        }
+      }
+    }`, { authorization: sessionToken });
+    } catch (errors) {
+      expect(errors.length).toBe(1);
+      expect(errors[0].message).toBe('Community does not exist.');
+    }
+  });
+
   test('should return one community', async () => {
     const sessionToken = await logIn();
     const { community: { title: titleA } } = await requestQuery<{ community: CommunitySchema }>(`{
@@ -86,7 +106,7 @@ describe('community', () => {
   });
 
   test('should return 6 communities starting from Fifth user', async () => {
-    const { communities  } = await requestQuery<{ communities: CommunitySchema[] }>(`{
+    const { communities } = await requestQuery<{ communities: CommunitySchema[] }>(`{
       communities(limit: 6, offset: 4){
               title
             }
