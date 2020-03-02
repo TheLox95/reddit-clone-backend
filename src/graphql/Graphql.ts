@@ -3,14 +3,15 @@ import Schema from "./Schema";
 import resolvers from "./resolvers";
 import getLoaders from "./Loaders";
 import { verify } from "jsonwebtoken";
-import { UserSchema } from "models/User";
+import User, { UserSchema } from "models/User";
 import Context from "./resolvers/Context";
 
 const getUser = async (req): Promise<UserSchema | null> => {
   const token = req.headers['authorization'];
   if (token) {
     try {
-      return await verify(token, process.env.JWT_SECRET) as UserSchema;
+      const data = await verify(token, process.env.JWT_SECRET) as UserSchema;
+      return User.findById(data.id).exec();
     } catch (e) {
       throw new AuthenticationError('Your session expired. Sign in again.');
     }

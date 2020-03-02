@@ -31,6 +31,7 @@ const Schema = gql`
             id: String!
             username: String!
             email: String!
+            posts: [Post]!
         }
         
         type Post{

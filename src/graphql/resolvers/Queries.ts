@@ -16,10 +16,11 @@ export const post: Resolver<{ id: string }> = async (_, { id }, { loaders }) => 
 };
 
 
-export const user: Resolver<{ id: string }> = async (p, { id }) => {
+export const user: Resolver<{ id: string }> = async (p, { id }, { loaders }) => {
     const u = await User.findOne({ _id: id }).exec();
     if (!u) return new UserInputError('User does not exist.');
-    return u;
+
+    return await User.batchData(loaders, [u])[0];
 };
 
 export const users: Resolver<{ offset?: number; limit?: number }> = async (p, { offset = 0, limit = 10 }) => {

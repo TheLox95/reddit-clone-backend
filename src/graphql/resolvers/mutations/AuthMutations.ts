@@ -3,6 +3,7 @@ import { AuthenticatedResolver } from "../Decorators";
 import Community from "models/Community";
 import Comment from "models/Comment";
 import { ValidationError } from "apollo-server";
+import User from "models/User";
 
 export const postCreateOne = AuthenticatedResolver<{ title: string; body: string; communityId: string }>(async (_, { title, body, communityId }, { me, loaders  }) => {
     const communityObj = await Community.findOne({ _id: communityId }).exec();
@@ -14,6 +15,8 @@ export const postCreateOne = AuthenticatedResolver<{ title: string; body: string
         author: me.id,
         community: communityId
     });
+
+    await User.findByIdAndUpdate(me.id, { posts: [ ...me.posts, p.id]});
 
     await Post.batchData(loaders, [p])[0];
     return p;

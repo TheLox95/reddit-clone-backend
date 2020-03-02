@@ -38,9 +38,9 @@ export interface PostSchema extends Document {
   author: UserSchema;
 }
 
-export interface UserModel extends Model<PostSchema> {
+export interface PostModel extends Model<PostSchema> {
   batchData: (loaders: Loaders, posts: PostSchema[]) => Promise<PostSchema>[];
 }
 
 // Default export
-export default model<PostSchema, UserModel>("Post", PostSchemaObj);
+export default model<PostSchema, PostModel>("Post", PostSchemaObj);
