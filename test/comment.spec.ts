@@ -69,10 +69,13 @@ describe('community', () => {
       communities{ posts{id} }
     }`);
 
-    const { commentCreateOne: { body, post, rootPost, author: { id } } } = await requestQuery<{ commentCreateOne: CommentSchema }>(`
+    const postToComment = communities[0].posts[0];
+
+    const { commentCreateOne: { id: commentId, body, post, rootPost, author: { id } } } = await requestQuery<{ commentCreateOne: CommentSchema }>(`
       mutation{
-        commentCreateOne(body: "# interesting", postId: "${communities[0].posts[0].id}", rootPostId: "${communities[0].posts[0].id}"){
+        commentCreateOne(body: "# super interesting", postId: "${postToComment.id}", rootPostId: "${postToComment.id}"){
           body
+          id
           post
           rootPost
           author{
@@ -81,10 +84,21 @@ describe('community', () => {
           }
         }
       }`, { authorization: token });
-    expect(body).toBe('# interesting');
+    expect(body).toBe('# super interesting');
     expect(id).toBeTruthy();
-    expect(post).toBe(communities[0].posts[0].id);
-    expect(rootPost).toBe(communities[0].posts[0].id);
+    expect(post).toBe(postToComment.id);
+    expect(rootPost).toBe(postToComment.id);
+
+    const { post: commentedPost } = await requestQuery<{ post: PostSchema }>(`{
+      post(id: "${postToComment.id}"){
+        comments{
+          id
+          body
+        }
+      }
+    }`);
+
+    expect(commentedPost.comments.find(c => c.id === commentId).body).toBe('# super interesting');
   });
 
   test('should fail to create comment if comment does not exist', async () => {
@@ -162,13 +176,16 @@ describe('community', () => {
       }
     }`);
 
-    const { subComments } = await requestQuery<{ subComments: CommentSchema[] }>(`{
-        subComments(id: "${communities[0].posts[0].comments.find(c => c.comments.length !== 0).id}"){
+    const { comment } = await requestQuery<{ comment: CommentSchema }>(`{
+        comment(id: "${communities[0].posts[0].comments.find(c => c.comments.length !== 0).id}"){
         body
+        comments{
+          id
+        }
       }
     }`, { authorization: sessionToken });
 
-    expect(subComments.length).toBeGreaterThan(0);
+    expect(comment.comments.length).toBeGreaterThan(0);
 
   });
 });

@@ -38,9 +38,9 @@ export const communities: Resolver<{ offset?: number; limit?: number }> = async 
     return Community.batchData(loaders, communities);
 };
 
-export const subComments: Resolver<{ id: string }> = async (p, { id } ) => {
+export const comment: Resolver<{ id: string }> = async (p, { id } ) => {
     const comment = await Comment.findById(id).exec();
     if (!comment) return new UserInputError('Comment does not exist.');
 
-    return comment.comments;
+    return comment;
 };

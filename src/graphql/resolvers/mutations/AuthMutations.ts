@@ -35,6 +35,7 @@ export const commentCreateOne = AuthenticatedResolver<{ body: string; rootPostId
         if (!postObj) throw new ValidationError('Post does not exist.');
 
         const result = await Comment.create({ ...commentToSave, post: postId });
+        await Post.findByIdAndUpdate(postObj.id, { comments: [ ...postObj.comments, result.id]});
         return result;
     }
 
