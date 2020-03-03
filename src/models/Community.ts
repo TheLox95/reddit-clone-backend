@@ -20,6 +20,7 @@ CommunitySchemaObj.statics.batchData = (loaders: Loaders, communities: Community
       p.posts = await Promise.all(p.posts.map(async c => {
         c = await loaders.batchPosts.load(c.toString());
         c.comments = await Promise.all(c.comments.map(o => loaders.batchComments.load(o.toString())));
+        c.author = await loaders.batchAuthors.load(c.author.toString());
         return c;
       }));
     }
