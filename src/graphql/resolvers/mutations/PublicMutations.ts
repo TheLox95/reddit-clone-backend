@@ -8,10 +8,10 @@ import { compare } from 'bcrypt';
 export const userCreateOne: Resolver<{ username: string; password: string; email: string }> = async (...args) => {
     const [, { username, password, email }] = args;
 
-    let u = await User.find({ username });
+    let u = await User.findOne({ username });
     if (u) throw new UserInputError('Username already used.');
 
-    u = await User.find({ email });
+    u = await User.findOne({ email });
     if (u) throw new UserInputError('Email already used.');
     
     const user = await User.create({

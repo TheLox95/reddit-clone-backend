@@ -24,7 +24,7 @@ export const postCreateOne = AuthenticatedResolver<{ title: string; body: string
 });
 
 export const communityCreateOne = AuthenticatedResolver<{ title: string }>(async (_, { title }, { me }) => {
-    const community = await Community.find({ title });
+    const community = await Community.findOne({ title });
     if (community) throw new UserInputError('Community name already used.');
 
     let c = await Community.create({ title, author: me.id });
