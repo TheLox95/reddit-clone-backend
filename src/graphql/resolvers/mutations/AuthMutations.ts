@@ -17,6 +17,7 @@ export const postCreateOne = AuthenticatedResolver<{ title: string; body: string
     });
 
     await User.findByIdAndUpdate(me.id, { posts: [ ...me.posts, p.id]});
+    await Community.findByIdAndUpdate(communityObj.id, { posts: [ ...communityObj.posts, p.id]});
 
     await Post.batchData(loaders, [p])[0];
     return p;
