@@ -13,7 +13,7 @@ export default class Server {
             useCreateIndex: true,
             useFindAndModify: true
         };
-        return mongoose.connect(`mongodb://localhost:27017/${dbName}`, opts);
+        return mongoose.connect(`mongodb://${process.env.MONGO_URL ?? 'localhost:27017'}/${dbName}`, opts);
     }
 
     start(): Promise<unknown> {
