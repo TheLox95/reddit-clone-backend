@@ -7,6 +7,7 @@
     "dev:test": "NODE_ENV=test PORT=6060 npm run dev",
     "dev": "JWT_SECRET='CT}GWq%%:}WC]5+<h~jX' node dist/app.js",
     "predev": "npm run build",
+    "start": "npm run build && node dist/app.js",
     "build": "tsc -p .",
     "test": "jest --runInBand",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
