@@ -2,7 +2,7 @@
   "name": "reddit-clone-backend",
   "version": "0.0.1",
   "description": "The backend for my reddit clone",
-  "main": "index.js",
+  "main": "dist/app.js",
   "scripts": {
     "dev:test": "NODE_ENV=test PORT=6060 npm run dev",
     "dev": "JWT_SECRET='CT}GWq%%:}WC]5+<h~jX' node dist/app.js",
