@@ -2,7 +2,7 @@ import Post from "models/Post";
 import { AuthenticatedResolver } from "../Decorators";
 import Community from "models/Community";
 import Comment from "models/Comment";
-import { ValidationError } from "apollo-server";
+import { ValidationError, UserInputError } from "apollo-server";
 import User from "models/User";
 
 export const postCreateOne = AuthenticatedResolver<{ title: string; body: string; communityId: string }>(async (_, { title, body, communityId }, { me, loaders  }) => {
@@ -24,6 +24,9 @@ export const postCreateOne = AuthenticatedResolver<{ title: string; body: string
 });
 
 export const communityCreateOne = AuthenticatedResolver<{ title: string }>(async (_, { title }, { me }) => {
+    const community = await Community.find({ title });
+    if (community) throw new UserInputError('Community name already used.');
+
     let c = await Community.create({ title, author: me.id });
     c = await c.populate('author').execPopulate();
     return c;
