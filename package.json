@@ -22,7 +22,7 @@
     "@types/mongoose": "^5.7.1",
     "@types/node": "^13.7.2",
     "apollo-server": "^2.10.1",
-    "apollo-server-express": "^2.10.1",
+    "apollo-server-express": "^2.14.2",
     "bcrypt": "^3.0.8",
     "dataloader": "^2.0.0",
     "express": "^4.17.1",
